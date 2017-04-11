@@ -4,115 +4,69 @@
  Author:	Yoosuf
 */
 
-#include <Servo.h>
-#include <EEPROM.h>
+#include "photoResistor.h"
+#include "Stepper.h"
 using namespace std;
-
-Servo servoMotor1; // create a servo motor object to control servos
-Servo servoMotor2; // create a servo motor object to control servos
-
-/********************
-FUNCTION DECLARATIONS
-********************/
 
 /********
 VARIABLES
 *********/
-const int phResisPin0 = A0;
-const int phResisPin1 = A1;
-const int phResisPin2 = A2;
-const int phResisPin3 = A3;
-const int phResisSize = 4;
-int phResisState[4];
-int horizontalServo = 90; // stand horizontal servo
-int verticalServo = 90; // stand vertical servo
-bool checkLastPosition = true;
-int motorOneAdress = 0;
-int motorTwoAdress = 2;
-int currTol = 0;
-int lastTol = 0;
+const int stepsPerRevolution = 400;  // change this to fit the number of steps per revolution
+									 // for your motor
 
+/******
+OBJECTS
+*******/
+PhotoResistorClass photoResistor; // instantiate the photoResistor class
+
+// Solar Tracker #1
+Stepper stepperA0(stepsPerRevolution, 4, 5, 6, 7);
+Stepper stepperB0(stepsPerRevolution, 8, 9, 10, 11);
+Stepper stepperC0(stepsPerRevolution, 12, 13, 14, 15);
+
+// Solar Tracker #2
+Stepper stepperA1(stepsPerRevolution, 16, 17, 18, 19);
+Stepper stepperB1(stepsPerRevolution, 20, 21, 22, 23);
+Stepper stepperC1(stepsPerRevolution, 24, 25, 26, 27);
+
+/********************
+FUNCTION DECLARATIONS
+********************/
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);	// begin serial communication
-	pinMode(phResisPin0, INPUT); // initialize pin 0 as an output for the photoresistor
-	pinMode(phResisPin1, INPUT); // initialize pin 1 as an output for the photoresistor
-	pinMode(phResisPin2, INPUT); // initialize pin 2 as an output for the photoresistor
-	pinMode(phResisPin3, INPUT); // initialize pin 3 as an output for the photoresistor
-	servoMotor1.attach(9); // attaches motor to digital pin 9
-	servoMotor2.attach(10); // attaches motor to digital pin 10
+
+	/* CHANGE PHOTORESISTOR PIN NUMBERS HERE */
+	photoResistor.init(A0, A1, A2, A3); // initialize the photoresistors with analong pin numbers
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	if (checkLastPosition) {
-		verticalServo = servoMotor1.read();
-		horizontalServo = servoMotor2.read();
-		/*Serial.println("+++++++++++");
-		Serial.println(verticalServo);
-		Serial.println("+++++++++++");
-		Serial.println(horizontalServo);
-		Serial.println("+++++++++++");*/
-		servoMotor1.write(verticalServo);
-		servoMotor2.write(horizontalServo);
-		checkLastPosition = false;
-	}
-	// read the state of the pushbutton value:
-	phResisState[0] = analogRead(phResisPin0);
-	phResisState[1] = analogRead(phResisPin1);
-	phResisState[2] = analogRead(phResisPin2);
-	phResisState[3] = analogRead(phResisPin3);
+	photoResistor.readNewAnalogValues(); // update the value of the photoresistors upon every iteration
+	photoResistor.updateAvgValue(); // update the average value of the photoresistors upon every iteration
 
-	int avt = (phResisState[0] + phResisState[3]) / 2; // average value top
-	int avd = (phResisState[1] + phResisState[2]) / 2; // average value down
-	int avl = (phResisState[0] + phResisState[1]) / 2; // average value left
-	int avr = (phResisState[2] + phResisState[3]) / 2; // average value right
-
-	int dvert = avt - avd; // check the diffirence of up and down
-	int dhoriz = avl - avr;// check the diffirence og left and rigtt
-
-	currTol = (avt + avd + avl + avr);
-
-	if (avt > (avd + 100)) {
-		verticalServo = ++verticalServo;
-		if (verticalServo > 180) {
-			verticalServo = 180;
+	/* VERTICAL MOVEMENT */
+	if (photoResistor.avg_up > photoResistor.avg_down) {
+		// move stepper motors in positive Y direction
 		}
-		}
-	else if (avt < (avd - 100)) {
-		verticalServo = --verticalServo;
-		if (verticalServo < 0) {
-			verticalServo = 0;
-		}
+	else if (photoResistor.avg_up < photoResistor.avg_down) {
+		// move stepper motors in negative Y direction
 	}
 
-	if (avl > (avr + 100)) {
-		horizontalServo = --horizontalServo;
 
-		if (horizontalServo < 0) {
-			horizontalServo = 0;
-		}
+	/* HORIZONTAL MOVEMENT */
+	if (photoResistor.avg_left > photoResistor.avg_right) {
+		// move stepper motors in postive X direction
 	}
-	else if (avl < (avr - 100)) {
-		horizontalServo = ++horizontalServo;
-
-		if (horizontalServo > 169) {
-			horizontalServo = 169;
-		}
+	else if (photoResistor.avg_left < photoResistor.avg_right) {
+		// move stepper motors in negative X direction
 	}
-	else if (avl == avr) {
+	else if (photoResistor.avg_left == photoResistor.avg_right) {
 		// nothing
 	}
 
-	servoMotor1.write(verticalServo);
-	servoMotor2.write(horizontalServo);
+	// WRITE TO THE SERVO MOTOR HERE.
+	// This will move 
 
-	Serial.println("+++++++++++");
-	Serial.println(currTol);
-	Serial.println(lastTol);
-	Serial.println("+++++++++++");
-
-	//Serial.println(servoMotor1.read());
-	Serial.println("--------------");
 	//delay(100);
 }
