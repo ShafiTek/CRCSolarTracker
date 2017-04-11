@@ -4,17 +4,15 @@
 
 #include "photoResistor.h"
 
-void PhotoResistorClass::init(int pinA, int pinB, int pinC, int pinD)
+void PhotoResistorClass::init(int pinA, int pinB, int pinC)
 {
 	phResisPin0 = pinA;
 	phResisPin1 = pinB;
 	phResisPin2 = pinC;
-	phResisPin3 = pinD;
 
 	pinMode(phResisPin0, INPUT); // initialize pin 0 as an output for the photoresistor
 	pinMode(phResisPin1, INPUT); // initialize pin 1 as an output for the photoresistor
 	pinMode(phResisPin2, INPUT); // initialize pin 2 as an output for the photoresistor
-	pinMode(phResisPin3, INPUT); // initialize pin 3 as an output for the photoresistor
 }
 
 void PhotoResistorClass::readNewAnalogValues() {
@@ -22,14 +20,16 @@ void PhotoResistorClass::readNewAnalogValues() {
 	phResisState[0] = analogRead(phResisPin0);
 	phResisState[1] = analogRead(phResisPin1);
 	phResisState[2] = analogRead(phResisPin2);
-	phResisState[3] = analogRead(phResisPin3);
 }
 
 void PhotoResistorClass::updateAvgValue() {
-	avg_up = (phResisState[0] + phResisState[3]) / 2; // average value top
-	avg_down = (phResisState[1] + phResisState[2]) / 2; // average value down
-	avg_left = (phResisState[0] + phResisState[1]) / 2; // average value left 
-	avg_right = (phResisState[2] + phResisState[3]) / 2; // average value right
+	val_north = phResisState[0]; // assign nort value
+	val_southEast = phResisState[1]; // assign southEast value
+	val_southWest = phResisState[2]; // assign southEast value
+
+	north = val_north / ((val_southEast + val_southWest) / 2);
+	southEast = val_southEast / ((val_north + val_southWest) / 2);
+	southWest = val_southWest / ((val_southEast + val_north) / 2);
 }
 
 PhotoResistorClass PhotoResistor;

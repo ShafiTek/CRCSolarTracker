@@ -9,10 +9,10 @@
 using namespace std;
 
 /*
-		PHOTORESISTOR POSITIONS
-	0(UP/LEFT)		|	 3(UP/RIGHT)
-	----------------------------------
-	1(DOWN/LEFT)	|	2 (DOWN/RIGHT)
+	PHOTORESISTOR POSITIONS
+			0 (NORTH)
+----------------------------------
+1(SOUTH/EAST)	|	2 (SOUTH/WEST)
 */
 
 /********
@@ -44,7 +44,7 @@ void setup() {
 	Serial.begin(9600);	// begin serial communication
 
 	/* CHANGE PHOTORESISTOR PIN NUMBERS HERE */
-	photoResistor.init(A0, A1, A2, A3); // initialize the photoresistors with analong pin numbers
+	photoResistor.init(A0, A1, A2); // initialize the photoresistors with analong pin numbers
 }
 
 // the loop function runs over and over again until power down or reset
@@ -52,28 +52,27 @@ void loop() {
 	photoResistor.readNewAnalogValues(); // update the value of the photoresistors upon every iteration
 	photoResistor.updateAvgValue(); // update the average value of the photoresistors upon every iteration
 
-	/* VERTICAL MOVEMENT */
-	if (photoResistor.avg_up > photoResistor.avg_down) {
-		// move stepper motors in positive Y direction
+	if (photoResistor.north >= 1.1) {
+		// Position STEPPER
 	}
-	else if (photoResistor.avg_up < photoResistor.avg_down) {
-		// move stepper motors in negative Y direction
+	else if (photoResistor.north < 0.9) {
+
 	}
 
+	if (photoResistor.southEast >= 1.1) {
+		// Position STEPPER
+	}
+	else if (photoResistor.southEast < 0.9) {
 
-	/* HORIZONTAL MOVEMENT */
-	if (photoResistor.avg_left > photoResistor.avg_right) {
-		// move stepper motors in postive X direction
-	}
-	else if (photoResistor.avg_left < photoResistor.avg_right) {
-		// move stepper motors in negative X direction
-	}
-	else if (photoResistor.avg_left == photoResistor.avg_right) {
-		// nothing
 	}
 
-	// WRITE TO THE SERVO MOTOR HERE.
-	// This will move 
+	if (photoResistor.southWest >= 1.1) {
+		// Position STEPPER
+	}
+	else if (photoResistor.southWest < 0.9) {
 
-	//delay(100);
+	}
+
+	// WRITE TO THE STEPPER MOTOR HERE.
+	// This will move stepper incrementally.
 }

@@ -15,16 +15,18 @@ class PhotoResistorClass
 	 int phResisPin0;
 	 int phResisPin1;
 	 int phResisPin2;
-	 int phResisPin3;
-	 const int phResisSize = 4;
-	 int phResisState[4];
+	 const int phResisSize = 3;
+	 int phResisState[3];
  public:
-	 int avg_up;	// avg of the top photoresistors
-	 int avg_down; // avg of the bottom photoresistors
-	 int avg_left; // avg of the left photoresistors
-	 int avg_right; // avg of the right photoresistors
+	 int val_north;	// value of the top photoresistors (0-1023)
+	 int val_southEast; // value of the south east photoresistor (0-1023)
+	 int val_southWest; // value of the left photoresistors (0-1023)
 
-	void init(int, int, int, int);
+	 double north;	// value of the top photoresistors (0-1023)
+	 double southEast; // value of the south east photoresistor (0-1023)
+	 double southWest; // value of the left photoresistors (0-1023)
+
+	void init(int, int, int);
 	void readNewAnalogValues();
 	void updateAvgValue();
 };
