@@ -1,12 +1,19 @@
 /*
  Name:		CRCSolarTracker.ino
  Created:	3/23/2017 8:02:43 PM
- Author:	Yoosuf
+ Authors:	Alex, Yoosuf
 */
 
 #include "photoResistor.h"
 #include "Stepper.h"
 using namespace std;
+
+/*
+		PHOTORESISTOR POSITIONS
+	0(UP/LEFT)		|	 3(UP/RIGHT)
+	----------------------------------
+	1(DOWN/LEFT)	|	2 (DOWN/RIGHT)
+*/
 
 /********
 VARIABLES
@@ -48,7 +55,7 @@ void loop() {
 	/* VERTICAL MOVEMENT */
 	if (photoResistor.avg_up > photoResistor.avg_down) {
 		// move stepper motors in positive Y direction
-		}
+	}
 	else if (photoResistor.avg_up < photoResistor.avg_down) {
 		// move stepper motors in negative Y direction
 	}
