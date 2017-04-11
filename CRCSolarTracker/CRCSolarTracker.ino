@@ -29,9 +29,8 @@ int verticalServo = 90; // stand vertical servo
 bool checkLastPosition = true;
 int motorOneAdress = 0;
 int motorTwoAdress = 2;
-double tol = 0;
-int oldDVert = 1;
-int oldDHoriz = 1;
+int currTol = 0;
+int lastTol = 0;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
@@ -70,52 +69,48 @@ void loop() {
 	int avr = (phResisState[2] + phResisState[3]) / 2; // average value right
 
 	int dvert = avt - avd; // check the diffirence of up and down
-	int dhoriz = avl - avr;// check the diffirence og left and rigt
+	int dhoriz = avl - avr;// check the diffirence og left and rigtt
 
-	tol = (avt + avl) / (avd + avr);
+	currTol = (avt + avd + avl + avr);
 
-	if (avt > avd) {
-			verticalServo = ++verticalServo;
-			if (verticalServo > 180) {
-				verticalServo = 180;
-			}
+	if (avt > (avd + 100)) {
+		verticalServo = ++verticalServo;
+		if (verticalServo > 180) {
+			verticalServo = 180;
 		}
-		else if (avt < avd) {
-			verticalServo = --verticalServo;
-			if (verticalServo < 0) {
-				verticalServo = 0;
-			}
 		}
-
-		if (avl > avr) {
-			horizontalServo = --horizontalServo;
-
-			if (horizontalServo < 0) {
-				horizontalServo = 0;
-			}
+	else if (avt < (avd - 100)) {
+		verticalServo = --verticalServo;
+		if (verticalServo < 0) {
+			verticalServo = 0;
 		}
-		else if (avl < avr) {
-			horizontalServo = ++horizontalServo;
-
-			if (horizontalServo > 169) {
-				horizontalServo = 169;
-			}
-		}
-		else if (avl == avr) {
-			// nothing
-		}
-
-	if (tol > 1.1 || tol < .9) {
-		servoMotor1.write(verticalServo);
-		servoMotor2.write(horizontalServo);
 	}
 
-	Serial.println("+++++++++++");
-	Serial.println(tol);
-	Serial.println("+++++++++++");
+	if (avl > (avr + 100)) {
+		horizontalServo = --horizontalServo;
 
-	oldDVert = dvert;
-	oldDHoriz = dhoriz;
+		if (horizontalServo < 0) {
+			horizontalServo = 0;
+		}
+	}
+	else if (avl < (avr - 100)) {
+		horizontalServo = ++horizontalServo;
+
+		if (horizontalServo > 169) {
+			horizontalServo = 169;
+		}
+	}
+	else if (avl == avr) {
+		// nothing
+	}
+
+	servoMotor1.write(verticalServo);
+	servoMotor2.write(horizontalServo);
+
+	Serial.println("+++++++++++");
+	Serial.println(currTol);
+	Serial.println(lastTol);
+	Serial.println("+++++++++++");
 
 	//Serial.println(servoMotor1.read());
 	Serial.println("--------------");
