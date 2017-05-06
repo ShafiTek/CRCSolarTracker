@@ -16,8 +16,8 @@ class PhotoResistorClass
 	 int phResisPin1;
 	 int phResisPin2;
 	 const int phResisSize = 3;
-	 int phResisState[3];
  public:
+	 int phResisState[3];
 	 int val_north;	// value of the top photoresistors (0-1023)
 	 int val_southEast; // value of the south east photoresistor (0-1023)
 	 int val_southWest; // value of the left photoresistors (0-1023)

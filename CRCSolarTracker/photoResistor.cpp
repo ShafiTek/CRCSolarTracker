@@ -27,9 +27,9 @@ void PhotoResistorClass::updateAvgValue() {
 	val_southEast = phResisState[1]; // assign southEast value
 	val_southWest = phResisState[2]; // assign southEast value
 
-	north = val_north / ((val_southEast + val_southWest) / 2);
-	southEast = val_southEast / ((val_north + val_southWest) / 2);
-	southWest = val_southWest / ((val_southEast + val_north) / 2);
+	north = val_north / ((val_southEast + val_southWest) / 2.0);
+	southEast = val_southEast / ((val_north + val_southWest) / 2.0);
+	southWest = val_southWest / ((val_southEast + val_north) / 2.0);
 }
 
 PhotoResistorClass PhotoResistor;
